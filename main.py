@@ -1,5 +1,6 @@
 from web3 import Web3
 import pandas as pd
+import matplotlib.pyplot as plt
 from tqdm.notebook import trange
 import time
 import operator
@@ -32,10 +33,22 @@ def convert_numeric_to_gregorian(dictionary, time_unit):
 		raise Exception("Invalid value of time_unit " + str(time_unit) + "!")
 
 def convert_dict_keys(dictionary, current_arr, target_arr):
-	for i in range(len(dictionary)):
-		if current_arr[i] in dictionary:
-			dictionary[target_arr[i]] = dictionary[current_arr[i]]
-			del dictionary[current_arr[i]]
+	if len(current_arr) == len(target_arr):
+		for i in range(len(target_arr)):
+			if current_arr[i] in dictionary:
+				dictionary[target_arr[i]] = dictionary[current_arr[i]]
+				del dictionary[current_arr[i]]
+	else:
+		raise Exception("Given arrays have different length!")
+
+def plot_dict_as_bar_chart(dictionary):
+	keys = list(dictionary.keys())
+	values = list(dictionary.values())
+	plt.bar(range(len(dictionary)), list(values), tick_label=keys)
+	plt.title("Transaction Overview")
+	plt.xlabel("Time Window")
+	plt.ylabel("Number of Transactions")
+	plt.show()
 
 def main():
 	# connect to blockchain
@@ -57,9 +70,10 @@ def main():
 
 		# determine times of transactions
 		years_dict = {}
-		months_dict = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, '12': 0}
-		days_dict = {'0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0}
+		months_dict = {}
+		days_dict = {}
 		hours_dict = {}
+		time_dict = {}
 
 		for i in range(len(transactions)):
 			result = time.localtime(transactions[i][0])
@@ -67,6 +81,7 @@ def main():
 			update_dict(months_dict, str(result.tm_mon))
 			update_dict(days_dict, str(result.tm_wday))
 			update_dict(hours_dict, str(result.tm_hour))
+			update_dict(time_dict, str(result.tm_hour) + ":" + str(result.tm_min))
 
 		convert_numeric_to_gregorian(days_dict, 'Day')
 		convert_numeric_to_gregorian(months_dict, 'Month')
@@ -78,18 +93,23 @@ def main():
 		print_transaction_statistics(months_dict, 'Month')
 		print_transaction_statistics(days_dict, 'Day')
 		print_transaction_statistics(hours_dict, 'Hour')
+		print_transaction_statistics(time_dict, 'Time')
 
 		# print transaction peaks
 		year_peak = get_key_with_max_value_from_dict(years_dict)
 		month_peak = get_key_with_max_value_from_dict(months_dict)
 		day_peak = get_key_with_max_value_from_dict(days_dict)
 		hour_peak = get_key_with_max_value_from_dict(hours_dict)
+		time_peak = get_key_with_max_value_from_dict(time_dict)
 
 		print("Year with most transactions is " + str(year_peak))
 		print("Month with most transactions is " + str(month_peak))
 		print("Day with most transactions is " + str(day_peak))
 		print("Hour with most transactions is " + str(hour_peak))
+		print("Time with most transactions is " + str(time_peak))
 
+		# plot statistics
+		plot_dict_as_bar_chart(hours_dict)
 	else:
 		print("ERROR: Connection to " + str(blockchain_address) + " could not be established!")
 
