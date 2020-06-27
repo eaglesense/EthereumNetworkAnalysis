@@ -1,7 +1,5 @@
 from web3 import Web3
-from IPython.display import HTML, display
 import pandas as pd
-import matplotlib.pyplot as plt
 from tqdm.notebook import trange
 import time
 import operator
@@ -52,7 +50,7 @@ def main():
 		end_block = 2000500
 
 		transactions = []
-		for block_id in trange(start_block, end_block): # trange gives us a neat progress bar
+		for block_id in trange(start_block, end_block):
 		    block = w3.eth.getBlock(block_id, full_transactions=True)
 		    for transaction_index in block.transactions:
 		        transactions.append([block.timestamp, block_id, transaction_index['to'], transaction_index['from']])
