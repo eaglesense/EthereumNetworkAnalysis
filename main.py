@@ -52,14 +52,14 @@ def main():
 		end_block = 2000500
 
 		transactions = []
-		for idx in trange(start_block, end_block): # trange gives us a neat progress bar
-		    b = w3.eth.getBlock(idx, full_transactions=True)
-		    for tx in b.transactions:
-		        transactions.append([b.timestamp, idx, tx['to'], tx['from']])
+		for block_id in trange(start_block, end_block): # trange gives us a neat progress bar
+		    block = w3.eth.getBlock(block_id, full_transactions=True)
+		    for transaction_index in block.transactions:
+		        transactions.append([block.timestamp, block_id, transaction_index['to'], transaction_index['from']])
 
 		# determine times of transactions
 		years_dict = {}
-		months_dict = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, '12': 0, }
+		months_dict = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, '12': 0}
 		days_dict = {'0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0}
 		hours_dict = {}
 
