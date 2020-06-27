@@ -22,7 +22,6 @@ def get_key_with_max_value_from_dict(dictionary):
 	return max(dictionary.items(), key=operator.itemgetter(1))[0]
 
 def convert_numeric_to_gregorian(dictionary, time_unit):
-	# TODO conversion does not work if first value of numeric array does not exist in dictionary
 	if time_unit is 'Day':
 		numeric = ['0', '1', '2', '3', '4', '5', '6']
 		gregorian = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -60,8 +59,8 @@ def main():
 
 		# determine times of transactions
 		years_dict = {}
-		months_dict = {}
-		days_dict = {}
+		months_dict = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, '12': 0, }
+		days_dict = {'0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0}
 		hours_dict = {}
 
 		for i in range(len(transactions)):
